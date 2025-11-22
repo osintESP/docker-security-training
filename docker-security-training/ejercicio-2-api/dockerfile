@@ -1,28 +1,30 @@
-# 1. BASE IMAGE: Usamos una imagen base ligera y específica
-FROM python:3.11-slim
+# -------------------------------------------------------------------------
+# ETAPA 1: DEPS INSTALLER (Instalar dependencias)
+# Usaremos 'deps_installer' como alias para esta etapa
+FROM python:3.11-slim@sha256:193fdd0bbcb3d2ae612bd6cc3548d2f7c78d65b549fcaa8af75624c47474444d AS deps_installer 
 
-# 2. DIRECTORIO DE TRABAJO
-WORKDIR /app
-
-# 3. CREAR UN USUARIO NO ROOT: El paso de seguridad más importante
-#    Creamos el grupo 'appgroup' y el usuario 'appuser'
-#    Nota: -S para usuario/grupo de sistema (sin shell/password)
-RUN groupadd -r appgroup && useradd -r -g appgroup -s /bin/false appuser
-
-# 4. Copiar dependencias e instalarlas
-#    Usamos 'pip install --no-cache-dir' para reducir el tamaño de la imagen final.
+WORKDIR /tmp
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 5. Copiar el código de la aplicación
+# -------------------------------------------------------------------------
+# ETAPA 2: FINAL (Imagen mínima y segura para ejecución)
+# NO le damos un alias, ya que es la etapa final.
+FROM python:3.11-slim@sha256:193fdd0bbcb3d2ae612bd6cc3548d2f7c78d65b549fcaa8af75624c47474444d 
+
+# ... (El resto de la configuración de seguridad y usuario)
+# Crear y establecer el usuario no root
+RUN groupadd -r appgroup && useradd -r -g appgroup -s /bin/false appuser
+
+# Copiamos solo los artefactos necesarios
+WORKDIR /app
+# USAMOS EL ALIAS CORREGIDO: 'deps_installer'
+COPY --from=deps_installer /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
 COPY api.py .
 
-# 6. ESTABLECER EL USUARIO NO ROOT: Aplicación del Mínimo Privilegio
-#    A partir de aquí, el proceso se ejecuta como 'appuser', no como 'root'.
+# Establecer el usuario no root para la ejecución
 USER appuser
 
-# 7. EXPOSURE: Documentamos el puerto (no tiene efecto de firewall)
 EXPOSE 5000
 
-# 8. COMANDO DE INICIO
 CMD ["python", "api.py"]
