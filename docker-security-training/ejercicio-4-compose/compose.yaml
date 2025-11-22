@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  # 1. SERVICIO DE API (Backend Seguro)
+  api-service:
+    image: crucegab/ej2-api-segura:v1.0 # ¡Tu imagen subida de DockerHub!
+    restart: always # Buena práctica para asegurar que reinicie si cae
+    # Opcional: Define cuántas copias queremos por defecto
+    deploy:
+      replicas: 1
+
+  # 2. SERVICIO NGINX (Load Balancer / Frontend)
+  nginx-lb:
+    image: nginx:latest
+    container_name: nginx_balancer
+    ports:
+      - "8080:80" # Exponemos el puerto 80 del NGINX al 8080 del host
+    volumes:
+      # Montamos el archivo de configuración de NGINX local
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - api-service # Asegura que la API se inicie antes que NGINX
