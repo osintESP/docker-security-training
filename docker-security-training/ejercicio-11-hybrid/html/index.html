@@ -1,12 +1,291 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>PQC Lab — Simple Page</title>
-  </head>
-  <body>
-    <h1>Post-Quantum TLS Lab — HTTPS Server</h1>
-    <p>Post-Quantum TLS running on port <strong>4433</strong>.</p>
-    <p>This static page confirms TLS negotiation & certificate validation.</p>
-  </body>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post-Quantum Cryptography Lab</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00d4ff, #7b2ff7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #a0a0a0;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+        }
+
+        .status-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #00d4ff;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .status-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 212, 255, 0.2);
+        }
+
+        .status-card h2 {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            color: #00d4ff;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 10px;
+            font-size: 0.95em;
+        }
+
+        .info-label {
+            color: #888;
+            font-weight: 600;
+        }
+
+        .info-value {
+            color: #ffffff;
+            font-family: 'Courier New', monospace;
+        }
+
+        .highlight {
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        .pqc-indicator {
+            display: inline-block;
+            padding: 6px 12px;
+            background: linear-gradient(90deg, #00ff88, #00d4ff);
+            color: #0a0a0a;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 700;
+            margin-left: 10px;
+        }
+
+        .warning {
+            background: rgba(255, 193, 7, 0.1);
+            border-left-color: #ffc107;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 0.9em;
+        }
+
+        .instructions {
+            background: rgba(123, 47, 247, 0.1);
+            border-left: 4px solid #7b2ff7;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .instructions h3 {
+            color: #7b2ff7;
+            margin-bottom: 10px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+
+        .instructions code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #00ff88;
+        }
+
+        #connection-status {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .tech-badge {
+            display: inline-block;
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid #00d4ff;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            margin: 5px 5px 5px 0;
+        }
+
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #666;
+            font-size: 0.85em;
+        }
+
+        a {
+            color: #00d4ff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #00ff88;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Post-Quantum Cryptography Lab</h1>
+        <p class="subtitle">Demostración de TLS 1.3 con intercambio de claves post-cuántico</p>
+
+        <div class="status-card" id="connection-status">
+            <h2>Estado de la Conexión <span class="pqc-indicator">ACTIVO</span></h2>
+            <div class="info-grid">
+                <span class="info-label">Protocolo:</span>
+                <span class="info-value">HTTPS (TLS 1.3)</span>
+                
+                <span class="info-label">Puerto:</span>
+                <span class="info-value">4433</span>
+                
+                <span class="info-label">Servidor:</span>
+                <span class="info-value">OpenQuantumSafe Nginx</span>
+                
+                <span class="info-label">Key Exchange:</span>
+                <span class="info-value highlight" id="key-exchange">Verificar en DevTools</span>
+            </div>
+        </div>
+
+        <div class="status-card">
+            <h2>Algoritmos Soportados</h2>
+            <div style="line-height: 2;">
+                <span class="tech-badge">X25519Kyber768</span>
+                <span class="tech-badge">x25519mlkem768</span>
+                <span class="tech-badge">X25519</span>
+                <span class="tech-badge">prime256v1</span>
+            </div>
+            <p style="margin-top: 15px; color: #aaa; font-size: 0.9em;">
+                Los algoritmos híbridos combinan curvas elípticas clásicas (X25519) con 
+                mecanismos post-cuánticos (Kyber768/ML-KEM768) para proteger contra 
+                ataques "store now, decrypt later".
+            </p>
+        </div>
+
+        <div class="instructions">
+            <h3>🔍 Cómo Verificar el Key Exchange Post-Cuántico</h3>
+            <ol>
+                <li>Abre <strong>Chrome DevTools</strong> (presiona <code>F12</code>)</li>
+                <li>Ve a la pestaña <code>Security</code></li>
+                <li>En la sección <strong>Connection</strong>, busca el campo <strong>Key Exchange</strong></li>
+                <li>Deberías ver: <code class="highlight">X25519Kyber768</code> o <code class="highlight">x25519mlkem768</code></li>
+            </ol>
+            <p style="margin-top: 15px; color: #aaa; font-size: 0.9em;">
+                <strong>Alternativa:</strong> En la pestaña <code>Network</code>, recarga la página, 
+                haz clic en el request a <code>localhost</code>, y busca "Key Exchange Group" 
+                en la pestaña <code>Security</code> del request.
+            </p>
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ Certificado Autofirmado:</strong> Este servidor usa un certificado 
+            autofirmado ECDSA (prime256v1) para propósitos educativos. Los browsers mostrarán 
+            una advertencia de seguridad que debes aceptar para continuar.
+        </div>
+
+        <div class="status-card">
+            <h2>¿Qué es Post-Quantum Cryptography?</h2>
+            <p style="line-height: 1.8; color: #ddd;">
+                La criptografía post-cuántica (PQC) son algoritmos diseñados para resistir 
+                ataques de computadoras cuánticas. <strong>Chrome 124+</strong> implementó 
+                <strong>X25519Kyber768</strong> por defecto, un esquema híbrido que combina:
+            </p>
+            <ul style="margin: 15px 0 0 20px; line-height: 1.8; color: #ddd;">
+                <li><strong>X25519:</strong> Curva elíptica clásica (seguridad actual)</li>
+                <li><strong>Kyber768:</strong> Algoritmo post-cuántico basado en lattices</li>
+            </ul>
+            <p style="margin-top: 15px; color: #aaa; font-size: 0.9em;">
+                La transición a <strong>ML-KEM768</strong> (versión estandarizada de Kyber) 
+                comenzó en Chrome 131. Este servidor soporta ambas versiones.
+            </p>
+        </div>
+
+        <footer>
+            <p>Docker Security Training • Ejercicio 11: PQC Híbrido</p>
+            <p style="margin-top: 5px;">
+                Powered by <a href="https://openquantumsafe.org/" target="_blank">Open Quantum Safe</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Intentar detectar el protocolo de seguridad
+        if (window.performance && window.performance.getEntriesByType) {
+            const navEntries = window.performance.getEntriesByType('navigation');
+            if (navEntries.length > 0) {
+                const nav = navEntries[0];
+                console.log('Navigation Timing:', nav);
+                
+                // No podemos acceder directamente al key exchange desde JavaScript
+                // Pero podemos verificar el protocolo
+                if (nav.nextHopProtocol) {
+                    console.log('Protocol:', nav.nextHopProtocol);
+                }
+            }
+        }
+
+        // Mostrar información de la conexión
+        console.log('%c🔐 Post-Quantum TLS Lab', 'color: #00d4ff; font-size: 20px; font-weight: bold;');
+        console.log('%cPara verificar el algoritmo de key exchange:', 'color: #aaa;');
+        console.log('%c1. Ve a la pestaña Security en DevTools', 'color: #00ff88;');
+        console.log('%c2. Busca "Key Exchange" o "Key Exchange Group"', 'color: #00ff88;');
+        console.log('%c3. Deberías ver X25519Kyber768 o x25519mlkem768', 'color: #00ff88;');
+        
+        // Detectar si la página se cargó sobre HTTPS
+        if (location.protocol === 'https:') {
+            console.log('%c✅ Conexión HTTPS detectada', 'color: #00ff88; font-weight: bold;');
+        } else {
+            console.log('%c⚠️  Conexión no segura (HTTP)', 'color: #ffc107; font-weight: bold;');
+        }
+    </script>
+</body>
 </html>
