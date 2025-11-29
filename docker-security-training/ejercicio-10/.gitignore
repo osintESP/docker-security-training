@@ -1,0 +1,12 @@
+# Ignorar certificados y claves privadas
+certs/
+*.key
+*.crt
+*.csr
+
+# Ignorar dependencias clonadas
+pqc-tls-lab/
+
+# Ignorar archivos de sistema/IDE
+.DS_Store
+.vscode/

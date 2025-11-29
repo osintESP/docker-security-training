@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pqc-server
+  labels:
+    app: pqc-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pqc-server
+  template:
+    metadata:
+      labels:
+        app: pqc-server
+    spec:
+      containers:
+      - name: pqc-app
+        # Esta imagen debe ser construida localmente o subida a un registry
+        image: pqc-lab:v1 
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 4433
+          name: https
+        # Configuración opcional de recursos
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
