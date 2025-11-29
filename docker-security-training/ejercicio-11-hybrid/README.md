@@ -64,10 +64,10 @@ sudo docker build -t pqc-hybrid .
 
 # 3. Ejecutar contenedor
 sudo docker run -d -p 4434:4433 --name pqc-hybrid pqc-hybrid
+```
 
 # 4. Abrir en Chrome
 https://localhost:4434
-```
 
 Acepta el certificado autofirmado:
 - Haz clic en **"Avanzado"** → **"Continuar a localhost (no seguro)"**

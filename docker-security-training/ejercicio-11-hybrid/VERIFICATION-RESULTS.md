@@ -164,8 +164,8 @@ sudo ./generate_certs.sh
 
 ### Construir y Ejecutar
 ```bash
-sudo docker build -t pqc-hybrid .
-sudo docker run -d -p 4434:4433 --name pqc-hybrid pqc-hybrid
+sudo sudo docker build -t pqc-hybrid .
+sudo sudo docker run -d -p 4434:4433 --name pqc-hybrid pqc-hybrid
 ```
 
 ### Verificar
@@ -182,7 +182,7 @@ openssl s_client -connect localhost:4434 -servername localhost
 
 ### Limpiar
 ```bash
-sudo docker stop pqc-hybrid && sudo docker rm pqc-hybrid
+sudo sudo docker stop pqc-hybrid && sudo sudo docker rm pqc-hybrid
 ```
 
 ---

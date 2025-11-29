@@ -68,8 +68,8 @@ Demostrar el **Intercambio de Claves Post-Cuántico (PQC Key Exchange)** usando 
 
 2. **Construir y ejecutar**:
    ```bash
-   docker build -t pqc-hybrid .
-   docker run -d -p 4434:4433 --name pqc-hybrid pqc-hybrid
+   sudo docker build -t pqc-hybrid .
+   sudo docker run -d -p 4434:4433 --name pqc-hybrid pqc-hybrid
    ```
 
 3. **Abrir en Chrome**: 
