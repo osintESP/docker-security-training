@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pqc-client-test
+spec:
+  containers:
+  - name: oqs-curl
+    # Imagen oficial de Open Quantum Safe con curl habilitado para PQC
+    image: openquantumsafe/curl
+    command: ["sleep", "3600"] # Mantenemos el pod vivo para entrar y probar manualmente
+    # Ejemplo de prueba:
+    # curl -k https://pqc-service --curves kyber768
