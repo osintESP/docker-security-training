@@ -38,27 +38,34 @@ Los **algoritmos post-cuánticos** están diseñados para resistir ataques de co
 ```bash
 ./generate_certs.sh
 ```
+## 🚀 Quick Start
 
-Esto genera certificados **ECDSA estándar** (prime256v1) compatibles con browsers. El PQC se aplica al **intercambio de claves**, no a los certificados.
-
-### 2️⃣ Construir Imagen Docker
-
-```bash
-docker build -t pqc-hybrid .
-```
-
-La imagen usa `openquantumsafe/nginx` que incluye OpenSSL con el proveedor OQS (Open Quantum Safe).
-
-### 3️⃣ Ejecutar Contenedor
+### Opción 1: Script Automático (Recomendado)
 
 ```bash
-docker run -d -p 4434:4433 --name pqc-hybrid pqc-hybrid
+cd ejercicio-11-hybrid
+./run.sh
 ```
 
-### 4️⃣ Abrir en Chrome
+El script automáticamente:
+- ✅ Genera certificados (si no existen)
+- ✅ Construye la imagen Docker
+- ✅ Inicia el contenedor
+- ✅ Muestra instrucciones de verificación
 
-Navega a:
-```
+### Opción 2: Paso a Paso
+
+```bash
+# 1. Generar certificados (solo la primera vez)
+sudo ./generate_certs.sh
+
+# 2. Construir imagen
+sudo docker build -t pqc-hybrid .
+
+# 3. Ejecutar contenedor
+sudo docker run -d -p 4434:4433 --name pqc-hybrid pqc-hybrid
+
+# 4. Abrir en Chrome
 https://localhost:4434
 ```
 
