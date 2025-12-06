@@ -1,0 +1,69 @@
+# =============================================================================
+# GITIGNORE - Docker Security Training Project
+# =============================================================================
+
+# Environment variables (IMPORTANT: Never commit secrets!)
+.env
+.env.local
+.env.*.local
+*.env
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn
+
+# Build outputs
+frontend/build/
+frontend/dist/
+api/dist/
+
+# IDE and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Testing
+coverage/
+.nyc_output/
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Database data (local development)
+data/
+pgdata/
+
+# Docker
+.docker/
+
+# Kubernetes secrets (generated)
+k8s/*-secret-generated.yaml
+
+# OS files
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# Backup files
+*.backup
+*.bak
+*.sql.gz

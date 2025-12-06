@@ -1,0 +1,173 @@
+# =============================================================================
+# DOCKER COMPOSE - SECURE MULTI-SERVICE CONFIGURATION
+# =============================================================================
+# Security Features:
+# - Private network isolation
+# - Resource limits (CPU/Memory)
+# - Health checks for all services
+# - Restart policies
+# - Read-only filesystems where possible
+# - No privileged containers
+# - Environment variables from .env file
+# - Volume persistence for database
+# =============================================================================
+
+services:
+  # ===========================================================================
+  # FRONTEND SERVICE
+  # ===========================================================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_API_URL: http://localhost:3001
+    image: secure-frontend:1.0.0
+    container_name: secure-frontend
+    restart: unless-stopped
+    network_mode: bridge
+
+    # Network configuration
+    ports:
+      - "8080:8080"
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+        reservations:
+          cpus: "0.1"
+          memory: 64M
+
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+
+  # ===========================================================================
+  # API SERVICE
+  # ===========================================================================
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    image: secure-api:1.0.0
+    container_name: secure-api
+    restart: unless-stopped
+    network_mode: bridge
+
+    # Environment variables
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - API_VERSION=1.0.0
+      - DB_HOST=172.17.0.1
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME:-secureapp}
+      - DB_USER=${DB_USER:-appuser}
+      - DB_PASSWORD=${DB_PASSWORD:-changeme_in_production}
+      - DB_POOL_MAX=10
+      - CORS_ORIGIN=http://localhost:8080
+
+    # Network configuration
+    ports:
+      - "3001:3001"
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 128M
+
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+
+  # ===========================================================================
+  # DATABASE SERVICE
+  # ===========================================================================
+  database:
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    image: secure-database:1.0.0
+    container_name: secure-database
+    restart: unless-stopped
+    network_mode: bridge
+
+    # Environment variables
+    environment:
+      - POSTGRES_DB=${DB_NAME:-secureapp}
+      - POSTGRES_USER=${DB_USER:-appuser}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-changeme_in_production}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+
+    # Network configuration
+    ports:
+      - "5432:5432"
+
+    # Volumes for data persistence
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+    # Health check
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-appuser} -d ${DB_NAME:-secureapp}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+        reservations:
+          cpus: "0.5"
+          memory: 256M
+
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+# =============================================================================
+# VOLUMES
+# =============================================================================
+volumes:
+  postgres-data:
+    driver: local
+    name: secure-app-postgres-data

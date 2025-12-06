@@ -1,0 +1,20 @@
+# =============================================================================
+# POSTGRESQL SERVICE
+# =============================================================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+  namespace: secure-app
+  labels:
+    app.kubernetes.io/name: secure-app
+    app.kubernetes.io/component: database
+spec:
+  type: ClusterIP  # Internal only - not exposed externally
+  selector:
+    app: postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP
+      name: postgres

@@ -1,0 +1,118 @@
+# =============================================================================
+# RBAC - Role-Based Access Control
+# =============================================================================
+# Implements least privilege principle for application pods
+# =============================================================================
+
+---
+# ServiceAccount for the API
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: api-service-account
+  namespace: secure-app
+  labels:
+    app.kubernetes.io/name: secure-app
+    app.kubernetes.io/component: api
+
+---
+# ServiceAccount for Frontend
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: frontend-service-account
+  namespace: secure-app
+  labels:
+    app.kubernetes.io/name: secure-app
+    app.kubernetes.io/component: frontend
+
+---
+# ServiceAccount for PostgreSQL
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: postgres-service-account
+  namespace: secure-app
+  labels:
+    app.kubernetes.io/name: secure-app
+    app.kubernetes.io/component: database
+
+---
+# Role with minimal permissions
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: app-role
+  namespace: secure-app
+  labels:
+    app.kubernetes.io/name: secure-app
+rules:
+  # Allow reading configmaps and secrets in the namespace
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list", "watch"]
+  # Allow reading own pod info (for health checks, debugging)
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+  # Allow reading services (for service discovery)
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["get", "list"]
+
+---
+# RoleBinding for API ServiceAccount
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: api-role-binding
+  namespace: secure-app
+  labels:
+    app.kubernetes.io/name: secure-app
+    app.kubernetes.io/component: api
+subjects:
+  - kind: ServiceAccount
+    name: api-service-account
+    namespace: secure-app
+roleRef:
+  kind: Role
+  name: app-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# RoleBinding for Frontend ServiceAccount
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: frontend-role-binding
+  namespace: secure-app
+  labels:
+    app.kubernetes.io/name: secure-app
+    app.kubernetes.io/component: frontend
+subjects:
+  - kind: ServiceAccount
+    name: frontend-service-account
+    namespace: secure-app
+roleRef:
+  kind: Role
+  name: app-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# RoleBinding for PostgreSQL ServiceAccount
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: postgres-role-binding
+  namespace: secure-app
+  labels:
+    app.kubernetes.io/name: secure-app
+    app.kubernetes.io/component: database
+subjects:
+  - kind: ServiceAccount
+    name: postgres-service-account
+    namespace: secure-app
+roleRef:
+  kind: Role
+  name: app-role
+  apiGroup: rbac.authorization.k8s.io

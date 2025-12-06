@@ -1,0 +1,11 @@
+# =============================================================================
+# NAMESPACE - Isolated environment for the application
+# =============================================================================
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: secure-app
+  labels:
+    app.kubernetes.io/name: secure-app
+    app.kubernetes.io/part-of: docker-security-training
+    environment: production

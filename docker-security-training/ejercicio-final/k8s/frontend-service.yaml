@@ -1,0 +1,40 @@
+# =============================================================================
+# FRONTEND SERVICE
+# =============================================================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+  namespace: secure-app
+  labels:
+    app.kubernetes.io/name: secure-app
+    app.kubernetes.io/component: frontend
+spec:
+  type: ClusterIP
+  selector:
+    app: frontend
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: http
+---
+# NodePort Service for external access (development/testing)
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service-external
+  namespace: secure-app
+  labels:
+    app.kubernetes.io/name: secure-app
+    app.kubernetes.io/component: frontend
+spec:
+  type: NodePort
+  selector:
+    app: frontend
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30080
+      protocol: TCP
+      name: http

@@ -1,0 +1,34 @@
+# =============================================================================
+# DOCKERIGNORE - Database
+# =============================================================================
+
+# Git files
+.git/
+.gitignore
+
+# Documentation
+README.md
+*.md
+
+# Docker files (not needed in context)
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Logs
+*.log
+
+# Backup files
+*.backup
+*.dump
+*.sql.gz
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Misc
+.DS_Store
+*.tmp

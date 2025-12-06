@@ -1,0 +1,19 @@
+# =============================================================================
+# POSTGRESQL PERSISTENT VOLUME CLAIM
+# =============================================================================
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: secure-app
+  labels:
+    app.kubernetes.io/name: secure-app
+    app.kubernetes.io/component: database
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  # Uncomment to specify a storage class
+  # storageClassName: standard

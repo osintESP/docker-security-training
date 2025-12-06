@@ -1,0 +1,40 @@
+# =============================================================================
+# API SERVICE
+# =============================================================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-service
+  namespace: secure-app
+  labels:
+    app.kubernetes.io/name: secure-app
+    app.kubernetes.io/component: api
+spec:
+  type: ClusterIP
+  selector:
+    app: api
+  ports:
+    - port: 3001
+      targetPort: 3001
+      protocol: TCP
+      name: http
+---
+# NodePort Service for external access (development/testing)
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-service-external
+  namespace: secure-app
+  labels:
+    app.kubernetes.io/name: secure-app
+    app.kubernetes.io/component: api
+spec:
+  type: NodePort
+  selector:
+    app: api
+  ports:
+    - port: 3001
+      targetPort: 3001
+      nodePort: 30001
+      protocol: TCP
+      name: http
