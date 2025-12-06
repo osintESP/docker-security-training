@@ -18,7 +18,9 @@ data:
   DB_PORT: "5432"
   DB_NAME: "secureapp"
   DB_POOL_MAX: "10"
-  CORS_ORIGIN: "http://frontend-service:8080"
+  # CORS_ORIGIN set to * for Minikube/local development
+  # In production, set to specific frontend URL
+  CORS_ORIGIN: "*"
 
-  # Frontend Configuration
+  # Frontend Configuration (not used in K8s, only for reference)
   REACT_APP_API_URL: "http://api-service:3001"
